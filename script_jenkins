@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+
+    stages {
+           stage('Git Clone') {
+            steps {
+                echo 'Cloning from Git'
+                git branch: 'main', url: 'https://github.com/kirankmr0101/mindcircuit15d.git'
+            }
+        }
+              stage('Build Artifact') {
+              steps {
+                 echo 'Build Artifact using maven build tool'
+                sh 'mvn clean install'
+            }
+        }
+
+               stage('Deploy to Tomcat') {
+               steps {
+                echo 'Deploy the build Artifact totomcat'
+                deploy adapters: [tomcat9(credentialsId: 'tomcatID', path: '', url: 'http://ec2-3-110-45-176.ap-south-1.compute.amazonaws.com:8080/')], contextPath: 'Hello Kiran Devops', war: '**/*.war'
+            }
+        }
+
+
+    }
+}
